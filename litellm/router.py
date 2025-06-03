@@ -3733,6 +3733,7 @@ class Router:
 
             raise original_exception
 
+    @tracer.wrap()
     async def make_call(self, original_function: Any, *args, **kwargs):
         """
         Handler for making a call to the .completion()/.embeddings()/etc. functions.
@@ -5424,6 +5425,7 @@ class Router:
 
         return returned_dict
 
+    @tracer.wrap()
     async def set_response_headers(
         self, response: Any, model_group: Optional[str] = None
     ) -> Any:

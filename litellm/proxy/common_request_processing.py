@@ -12,6 +12,7 @@ from typing import (
     Tuple,
     Union,
 )
+from litellm.litellm_core_utils.dd_tracing import tracer
 
 import httpx
 import orjson
@@ -88,6 +89,7 @@ async def _parse_event_data_for_error(event_line: Union[str, bytes]) -> Optional
     return None
 
 
+@tracer.wrap()
 async def create_streaming_response(
     generator: AsyncGenerator[str, None],
     media_type: str,
@@ -229,6 +231,7 @@ class ProxyBaseLLMRequestProcessing:
             verbose_proxy_logger.error(f"Error setting custom headers: {e}")
             return {}
 
+    @tracer.wrap()
     async def common_processing_pre_call_logic(
         self,
         request: Request,
@@ -316,6 +319,7 @@ class ProxyBaseLLMRequestProcessing:
 
         return self.data, logging_obj
 
+    @tracer.wrap()
     async def base_process_llm_request(
         self,
         request: Request,

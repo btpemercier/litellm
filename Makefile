@@ -33,3 +33,19 @@ test-integration:
 
 test-unit-helm:
 	helm unittest -f 'tests/*.yaml' deploy/charts/litellm-helm
+
+TIMESTAMP := $(shell date +%Y%m%d-%H%M%S)
+VERSION := $(shell cat version.txt)
+
+increment-version:
+	@echo "Current version: $(VERSION)"
+	@echo $$(($(VERSION) + 1)) > version.txt
+	@echo "New version: $$(cat version.txt)"
+
+docker-build: increment-version
+	$(eval NEW_VERSION := $(shell cat version.txt))
+	docker buildx build --tag repository.betclic.net/docker/litellm-pe:$(NEW_VERSION) -o type=image --platform=linux/amd64 .
+
+docker-push: docker-build
+	$(eval NEW_VERSION := $(shell cat version.txt))
+	docker push repository.betclic.net/docker/litellm-pe:$(NEW_VERSION)

@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING, Any, Literal, Optional
+from litellm.litellm_core_utils.dd_tracing import tracer
 
 from fastapi import HTTPException, status
 
@@ -53,6 +54,7 @@ def get_team_id_from_data(data: dict) -> Optional[str]:
     return None
 
 
+@tracer.wrap()
 async def route_request(
     data: dict,
     llm_router: Optional[LitellmRouter],

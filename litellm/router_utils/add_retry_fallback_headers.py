@@ -3,6 +3,7 @@ from typing import Any, Optional, Union
 from pydantic import BaseModel
 
 from litellm.types.utils import HiddenParams
+from litellm.litellm_core_utils.dd_tracing import tracer
 
 
 def _add_headers_to_response(response: Any, headers: dict) -> Any:
@@ -29,7 +30,7 @@ def _add_headers_to_response(response: Any, headers: dict) -> Any:
     setattr(response, "_hidden_params", hidden_params_dict)
     return response
 
-
+@tracer.wrap()
 def add_retry_headers_to_response(
     response: Any,
     attempted_retries: int,
@@ -46,7 +47,7 @@ def add_retry_headers_to_response(
 
     return _add_headers_to_response(response, retry_headers)
 
-
+@tracer.wrap()
 def add_fallback_headers_to_response(
     response: Any,
     attempted_fallbacks: int,
